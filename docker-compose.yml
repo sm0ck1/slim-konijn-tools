@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  tools:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: slim_konijn_tools
+    ports:
+      - "${PORT:-8010}:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./stanza_resources:/app/stanza_resources
+    restart: unless-stopped
+    networks:
+      - slim_konijn_network
+
+networks:
+  slim_konijn_network:
+    driver: bridge
+
