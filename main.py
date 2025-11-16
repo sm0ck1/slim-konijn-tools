@@ -137,7 +137,7 @@ class WordAnalysis(BaseModel):
     lemma: str
     synonyms: List[str] = []
     is_valid: bool = True
-    suggestions: List[str] = []
+    # suggestions: List[str] = []
 
 
 class SentenceAnalysis(BaseModel):
@@ -309,10 +309,10 @@ async def analyze_sentence(request: AnalyzeSentenceRequest) -> SentenceAnalysis:
                 # Check word validity using FastText
                 is_valid = check_word_validity(word.text, request.language)
                 
-                # Find suggestions if word is invalid
-                suggestions = []
-                if not is_valid:
-                    suggestions = find_similar_words(word.text, request.language, topn=5)
+                # # Find suggestions if word is invalid
+                # suggestions = []
+                # if not is_valid:
+                #     suggestions = find_similar_words(word.text, request.language, topn=5)
                 
                 # Get synonyms for each word if requested
                 synonyms = []
@@ -329,7 +329,7 @@ async def analyze_sentence(request: AnalyzeSentenceRequest) -> SentenceAnalysis:
                         lemma=word.lemma,
                         synonyms=synonyms,
                         is_valid=is_valid,
-                        suggestions=suggestions
+                        # suggestions=suggestions
                     )
                 )
         
