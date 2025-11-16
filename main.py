@@ -24,13 +24,18 @@ except LookupError:
 # --- FastText Model Download Helper ---
 def download_fasttext_model(lang: str) -> str:
     """Download FastText model if not exists"""
-    model_path = f"cc.{lang}.300.bin"
+    # Create fasttext_models directory if it doesn't exist
+    models_dir = "fasttext_models"
+    os.makedirs(models_dir, exist_ok=True)
+    
+    model_path = os.path.join(models_dir, f"cc.{lang}.300.bin")
     
     if os.path.exists(model_path):
         print(f"FastText {lang} model already exists at {model_path}")
         return model_path
     
     gz_path = f"{model_path}.gz"
+    model_filename = f"cc.{lang}.300.bin.gz"
     url = f"https://dl.fbaipublicfiles.com/fasttext/vectors-crawl/{gz_path.split('/')[-1]}"
     
     print(f"Downloading FastText {lang} model from {url}...")

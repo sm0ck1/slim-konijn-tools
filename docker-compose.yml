@@ -12,6 +12,7 @@ services:
       - PYTHONUNBUFFERED=1
     volumes:
       - ./stanza_resources:/app/stanza_resources
+      - ./fasttext_models:/app/fasttext_models
     restart: unless-stopped
     networks:
       - slim_konijn_network
