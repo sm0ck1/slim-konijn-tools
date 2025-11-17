@@ -229,7 +229,7 @@ def find_similar_words(word: str, lang: str = 'en', topn: int = 5) -> List[str]:
         # FastText get_nearest_neighbors returns list of (similarity, word) tuples
         neighbors = model.get_nearest_neighbors(word_lower, k=topn)
         # Filter by similarity threshold and return only words
-        return [w for sim, w in neighbors if sim > 0.6]
+        return [w for sim, w in neighbors if sim > 0.85]
     except Exception as e:
         print(f"Error finding similar words for '{word}': {e}")
         return []
