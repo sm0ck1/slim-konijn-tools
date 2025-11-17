@@ -206,16 +206,16 @@ def check_word_validity(word: str, lang: str = 'en') -> bool:
     lemma = lemmatize(word, lang).lower()
     
     # FastText can generate vectors for any word, so we check by getting neighbors
-    # If it finds good neighbors, the word is likely valid
+    # Lower threshold for more permissive validation
     try:
-        # Try to get neighbors - if it works, word is valid enough
+        # Try to get neighbors - if similarity is reasonable, word is valid
         neighbors = model.get_nearest_neighbors(word_lower, k=1)
-        # If closest neighbor is very close (>0.8), word is likely valid
-        if neighbors and neighbors[0][0] > 0.8:
+        # Lowered threshold to 0.5 - word is valid if it has reasonable similarity
+        if neighbors and neighbors[0][0] > 0.5:
             return True
-        # Also try lemma
+        # Also try lemma with lower threshold
         neighbors_lemma = model.get_nearest_neighbors(lemma, k=1)
-        return neighbors_lemma and neighbors_lemma[0][0] > 0.8
+        return neighbors_lemma and neighbors_lemma[0][0] > 0.5
     except:
         return False
 
