@@ -141,13 +141,10 @@ class WordAnalysis(BaseModel):
     pos_tag: str
     lemma: str
     synonyms: List[str] = []
-    is_valid: bool = True
-    # suggestions: List[str] = []
 
 
 class SentenceAnalysis(BaseModel):
     sentence: str
-    is_valid: bool
     words: List[WordAnalysis]
     tokens: List[str]
 
@@ -311,14 +308,6 @@ async def analyze_sentence(request: AnalyzeSentenceRequest) -> SentenceAnalysis:
             for word in sent.words:
                 tokens.append(word.text)
                 
-                # Check word validity using FastText
-                is_valid = check_word_validity(word.text, request.language)
-                
-                # # Find suggestions if word is invalid
-                # suggestions = []
-                # if not is_valid:
-                #     suggestions = find_similar_words(word.text, request.language, topn=5)
-                
                 # Get synonyms for each word if requested
                 synonyms = []
                 if request.include_synonyms:
@@ -332,42 +321,18 @@ async def analyze_sentence(request: AnalyzeSentenceRequest) -> SentenceAnalysis:
                         word=word.text,
                         pos_tag=word.pos,
                         lemma=word.lemma,
-                        synonyms=synonyms,
-                        is_valid=is_valid,
-                        # suggestions=suggestions
+                        synonyms=synonyms
                     )
                 )
         
-        # Grammar validation using dependency parsing
-        # Check if sentence has a ROOT (main verb) and proper structure
-        has_root = False
-        has_subject = False
-        
-        for sent in doc.sentences:
-            for word in sent.words:
-                # ROOT is the main verb/predicate
-                if word.deprel == "root":
-                    has_root = True
-                # nsubj is the subject (nominal subject)
-                if word.deprel in ["nsubj", "nsubj:pass"]:
-                    has_subject = True
-            
-            print(f"DEBUG - Dependencies: {[(w.text, w.deprel, w.head) for w in sent.words]}")
-        
-        # Sentence is valid if it has ROOT (main predicate) 
-        # and ideally should have subject, but some imperative sentences don't have explicit subject
-        is_valid = has_root
-        
         return SentenceAnalysis(
             sentence=request.sentence,
-            is_valid=is_valid,
             words=words_analysis,
             tokens=tokens
         )
     except Exception as e:
         return SentenceAnalysis(
             sentence=request.sentence,
-            is_valid=False,
             words=[],
             tokens=[]
         )
